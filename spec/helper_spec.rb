@@ -35,4 +35,24 @@ describe 'tadp' do
 
   end
 
+  it 'prototipos programaticos - parte 1' do
+    guerrero = PrototypedObject.new
+    guerrero.set_property(:energia, 100)
+    expect(guerrero.energia).to eq(100)
+    guerrero.set_property(:potencial_defensivo, 10)
+    guerrero.set_property(:potencial_ofensivo, 30)
+    guerrero.set_method(:atacar_a,
+                        proc {
+                            |otro_guerrero|
+                          if(otro_guerrero.potencial_defensivo < self.potencial_ofensivo)
+                            otro_guerrero.recibe_danio(self.potencial_ofensivo - otro_guerrero.potencial_defensivo)
+                          end
+                        });
+    guerrero.set_method(:recibe_danio, proc {|danio|self.energia = self.energia - danio}) # originalmente decia {...}
+    otro_guerrero = guerrero.clone #clone es un metodo que ya viene definido en Ruby
+    guerrero.atacar_a otro_guerrero
+    expect(otro_guerrero.energia).to eq(80)
+
+  end
+
 end
