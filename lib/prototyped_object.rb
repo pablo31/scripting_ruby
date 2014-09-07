@@ -3,11 +3,24 @@ class PrototypedObject
   # Logica inicial
 
   def set_property name, value
-    # TODO
+    self.instance_variable_set("@#{name}", value)
+
+    crear_getter_y_setter(name)
+
+  end
+
+  def crear_getter_y_setter(name)
+    self.set_method(name, proc { self.instance_variable_get("@#{name}") })
+
+    self.set_method("#{name}=", proc {
+      |valor|
+      self.instance_variable_set("@#{name}", valor)
+    })
+
   end
 
   def set_method name, block
-    # TODO
+    self.define_singleton_method(name, block)
   end
 
   def set_prototype obj
