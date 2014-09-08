@@ -4,19 +4,15 @@ class PrototypedObject
 
   def set_property name, value
     self.instance_variable_set("@#{name}", value)
-
     crear_getter_y_setter(name)
-
   end
 
   def crear_getter_y_setter(name)
     self.set_method(name, proc { self.instance_variable_get("@#{name}") })
 
-    self.set_method("#{name}=", proc {
-      |valor|
+    self.set_method("#{name}=", proc { |valor|
       self.instance_variable_set("@#{name}", valor)
     })
-
   end
 
   def set_method name, block
