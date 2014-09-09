@@ -3,31 +3,79 @@ require_relative '../lib/prototyped_object'
 
 describe PrototypedObject do
 
-  it 'permite definir un nuevo metodo' do
-    objeto = PrototypedObject.new
+  # parte 1
 
-    objeto.set_method(:nombre_metodo, proc {2})
-    expect(objeto.nombre_metodo).to eq(2)
-
-    objeto2 = PrototypedObject.new
-    expect{
-      objeto2.nombre_motodo
-    }.to raise_error NoMethodError
-
+  let :objeto do
+    PrototypedObject.new
   end
 
-  it 'permite definir una nueva propiedad' do
-    objeto_prototipado = PrototypedObject.new
-
-    objeto_prototipado.set_property(:nueva_propiedad, 100)
-    expect(objeto_prototipado.nueva_propiedad).to eq(100)
-    expect(objeto_prototipado.nueva_propiedad = 200).to eq(200)
-
-    objeto_prototipado2 = PrototypedObject.new
-    expect{objeto_prototipado2.nueva_propiedad}.to raise_error NoMethodError
-    expect{objeto_prototipado2.nueva_propiedad = 350}.to raise_error NoMethodError
-
+  context 'set_property' do
+    it 'permite definir una nueva propiedad' do
+      objeto.set_property(:nueva_propiedad, 100)
+      expect(objeto.nueva_propiedad).to eq(100)
+      expect(objeto.nueva_propiedad = 200).to eq(200)
+    end
+    it 'arroja excepcion si no se le asigno la propiedad' do
+      expect{objeto.nueva_propiedad}.to raise_error NoMethodError
+      expect{objeto.nueva_propiedad = 350}.to raise_error NoMethodError
+    end
   end
+
+  context 'set_method' do
+    it 'permite definir un nuevo metodo' do
+      objeto.set_method(:nombre_metodo, proc {2})
+      expect(objeto.nombre_metodo).to eq(2)
+    end
+    it 'arroja excepcion si no se le asigno el metodo' do
+      expect{objeto.nombre_motodo}.to raise_error NoMethodError
+    end
+  end
+
+  context 'set' do
+    it 'permite definir un metodo o propiedad indistintamente' do
+      objeto.set(:nueva_propiedad, 15)
+      expect(objeto.nueva_propiedad).to eq(15)
+      objeto.set(:nuevo_proc, proc { 320 + 1 })
+      expect(objeto.nuevo_proc).to eq(321)
+      objeto.set(:nuevo_metodo) { 670 + 8 }
+      expect(objeto.nuevo_metodo).to eq(678)
+    end
+    it 'arroja excepcion si no se le asigna un metodo o propiedad' do
+      expect{objeto.set(:metodo_o_propiedad)}.to raise_error
+    end
+  end
+
+  # parte 2
+
+  let :padre do
+    PrototypedObject.new
+  end
+  let :hijo do
+    obj = PrototypedObject.new
+    obj.set_prototype(padre)
+    obj
+  end
+
+  context 'un objeto' do
+    it 'posee las propiedades de su prototipo' do
+      padre.set_property :propiedad, 100
+      expect(hijo.propiedad).to eq 100
+    end
+    it 'posee los metodos de su prototipo' do
+      padre.set_method :metodo, proc{ 100 }
+      expect(hijo.metodo).to eq 100
+    end
+    it 'no posee las propiedades de sus hijos' do
+      hijo.set_property :propiedad, proc{ 100 }
+      expect{padre.propiedad}.to raise_error NoMethodError
+    end
+    it 'no posee los metodos de sus hijos' do
+      hijo.set_method :metodo, proc{ 100 }
+      expect{padre.metodo}.to raise_error NoMethodError
+    end
+  end
+
+  # tests de integracion
 
   it 'prototipos programaticos - parte 1' do
     guerrero = PrototypedObject.new
@@ -51,32 +99,6 @@ describe PrototypedObject do
 
     expect(otro_guerrero.energia).to eq(80)
 
-  end
-
-  let :padre do
-    PrototypedObject.new
-  end
-  let :hijo do
-    obj = PrototypedObject.new
-    obj.set_prototype(padre)
-    obj
-  end
-
-  it 'posee las propiedades de su prototipo' do
-    padre.set_property :propiedad, 100
-    expect(hijo.propiedad).to eq 100
-  end
-  it 'posee los metodos de su prototipo' do
-    padre.set_method :metodo, proc{ 100 }
-    expect(hijo.metodo).to eq 100
-  end
-  it 'no posee las propiedades de sus hijos' do
-    hijo.set_property :propiedad, proc{ 100 }
-    expect{padre.propiedad}.to raise_error NoMethodError
-  end
-  it 'no posee los metodos de sus hijos' do
-    hijo.set_method :metodo, proc{ 100 }
-    expect{padre.metodo}.to raise_error NoMethodError
   end
 
 end

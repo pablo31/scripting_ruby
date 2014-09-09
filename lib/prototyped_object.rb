@@ -25,10 +25,11 @@ class PrototypedObject
 
   # Para ver mas adelante: funcion que setea una variable o metodo indistintamente
 
-  # def set name, value, &block
-  #   define_method(name, &block) and return if block_given?
-  #   # TODO
-  # end
+  def set name, value=nil, &block
+    value ||= block
+    raise('Se debe especificar un valor o bloque de codigo para la asignacion') unless value
+    value.is_a?(Proc) ? set_method(name, value) : set_property(name, value)
+  end
 
   # Asignacion "a la javascript"
 
