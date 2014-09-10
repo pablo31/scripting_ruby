@@ -1,12 +1,12 @@
+require_relative 'metamodel'
+
 class PrototypedObject
 
   # Logica inicial
 
   def set_property name, value
     self.instance_variable_set("@#{name}", value)
-
     crear_getter_y_setter(name)
-
   end
 
   def crear_getter_y_setter(name)
@@ -102,53 +102,5 @@ class PrototypedObject
     created_clone.metamodel = obj.metamodel.clone
 
     created_clone
-  end
-end
-
-
-# class Object
-#   include PrototypedObject
-# end
-
-
-class Metamodel
-
-  def add_method(name, block)
-    get_methods[name] = block
-  end
-
-  def get_methods
-    if !@methods
-      @methods = Hash.new
-    end
-    @methods
-  end
-
-  def get_method(name)
-    method = get_methods[name]
-
-    if (!method and parent_metamodel)
-      method = parent_metamodel.get_method name
-    end
-
-    method
-  end
-
-  def parent_metamodel=(parent_metamodel)
-    @parent_metamodel = parent_metamodel
-  end
-
-  def parent_metamodel
-    @parent_metamodel
-  end
-
-  def clone
-    cloned_metamodel = Metamodel.new
-
-    get_methods.each do |key, method|
-      cloned_metamodel.add_method(key, method)
-    end
-
-    cloned_metamodel
   end
 end
