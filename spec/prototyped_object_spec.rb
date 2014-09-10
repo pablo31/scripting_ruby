@@ -101,4 +101,147 @@ describe PrototypedObject do
 
   end
 
+  it 'prototipos programaticos - parte 2' do
+    #PARTE 1
+    guerrero = PrototypedObject.new
+
+    guerrero.set_property(:energia, 100)
+    expect(guerrero.energia).to eq(100)
+
+    guerrero.set_property(:potencial_defensivo, 10)
+    guerrero.set_property(:potencial_ofensivo, 30)
+    guerrero.set_method(:atacar_a, proc { |otro_guerrero|
+      if(otro_guerrero.potencial_defensivo < self.potencial_ofensivo)
+        otro_guerrero.recibe_danio(self.potencial_ofensivo - otro_guerrero.potencial_defensivo)
+      end
+    })
+    guerrero.set_method(:recibe_danio, proc { |danio|
+      self.energia = self.energia - danio
+    })
+
+    otro_guerrero = guerrero.clone
+    guerrero.atacar_a otro_guerrero
+
+    expect(otro_guerrero.energia).to eq(80)
+    #PARTE 1 FIN
+
+    espadachin = PrototypedObject.new
+    espadachin.set_prototype(guerrero)
+    espadachin.set_property(:habilidad, 0.5)
+    espadachin.set_property(:potencial_espada, 30)
+    espadachin.energia = 100
+    #{...} #mas inicializaciones
+    espadachin.potencial_ofensivo = 0
+    #deberia llamar a super, pero eso lo resolvemos mas adelante
+    espadachin.set_method(:potencial_ofensivo, proc {
+      @potencial_ofensivo + self.potencial_espada * self.habilidad
+    })
+    espadachin.atacar_a(otro_guerrero)
+    expect(otro_guerrero.energia).to eq(75)
+
+
+  end
+
+  it 'prototipos programaticos - parte 3' do
+    #PARTE 1
+    guerrero = PrototypedObject.new
+
+    guerrero.set_property(:energia, 100)
+    expect(guerrero.energia).to eq(100)
+
+    guerrero.set_property(:potencial_defensivo, 10)
+    guerrero.set_property(:potencial_ofensivo, 30)
+    guerrero.set_method(:atacar_a, proc { |otro_guerrero|
+      if(otro_guerrero.potencial_defensivo < self.potencial_ofensivo)
+        otro_guerrero.recibe_danio(self.potencial_ofensivo - otro_guerrero.potencial_defensivo)
+      end
+    })
+    guerrero.set_method(:recibe_danio, proc { |danio|
+      self.energia = self.energia - danio
+    })
+
+    otro_guerrero = guerrero.clone
+    guerrero.atacar_a otro_guerrero
+
+    expect(otro_guerrero.energia).to eq(80)
+    #PARTE 1 FIN
+
+    #PARTE 2
+    espadachin = PrototypedObject.new
+    espadachin.set_prototype(guerrero)
+    espadachin.set_property(:habilidad, 0.5)
+    espadachin.set_property(:potencial_espada, 30)
+    espadachin.energia = 100
+    #{...} #mas inicializaciones
+    espadachin.potencial_ofensivo = 0
+    #deberia llamar a super, pero eso lo resolvemos mas adelante
+    espadachin.set_method(:potencial_ofensivo, proc {
+      @potencial_ofensivo + self.potencial_espada * self.habilidad
+    })
+    espadachin.atacar_a(otro_guerrero)
+    expect(otro_guerrero.energia).to eq(75)
+    #PARTE 2 FIN
+
+    guerrero.set_method(:sanar, proc {
+      self.energia = self.energia + 10
+    })
+    espadachin.sanar
+    expect(espadachin.energia).to eq(110)
+
+
+  end
+
+  it 'prototipos programaticos - parte 4' do
+    #PARTE 1
+    guerrero = PrototypedObject.new
+
+    guerrero.set_property(:energia, 100)
+    expect(guerrero.energia).to eq(100)
+
+    guerrero.set_property(:potencial_defensivo, 10)
+    guerrero.set_property(:potencial_ofensivo, 30)
+    guerrero.set_method(:atacar_a, proc { |otro_guerrero|
+      if(otro_guerrero.potencial_defensivo < self.potencial_ofensivo)
+        otro_guerrero.recibe_danio(self.potencial_ofensivo - otro_guerrero.potencial_defensivo)
+      end
+    })
+    guerrero.set_method(:recibe_danio, proc { |danio|
+      self.energia = self.energia - danio
+    })
+
+    otro_guerrero = guerrero.clone
+    guerrero.atacar_a otro_guerrero
+
+    expect(otro_guerrero.energia).to eq(80)
+    #PARTE 1 FIN
+
+    #PARTE 2
+    espadachin = PrototypedObject.new
+    espadachin.set_prototype(guerrero)
+    espadachin.set_property(:habilidad, 0.5)
+    espadachin.set_property(:potencial_espada, 30)
+    espadachin.energia = 100
+    #{...} #mas inicializaciones
+    espadachin.potencial_ofensivo = 0
+    #deberia llamar a super, pero eso lo resolvemos mas adelante
+    espadachin.set_method(:potencial_ofensivo, proc {
+      @potencial_ofensivo + self.potencial_espada * self.habilidad
+    })
+    espadachin.atacar_a(otro_guerrero)
+    expect(otro_guerrero.energia).to eq(75)
+    #PARTE 2 FIN
+
+    #PARTE 3
+    guerrero.set_method(:sanar, proc {
+      self.energia = self.energia + 10
+    })
+    espadachin.sanar
+    expect(espadachin.energia).to eq(110)
+    #PARTE 3 FIN
+
+    expect {otro_guerrero.sanar}.to raise_error(NoMethodError)
+
+
+  end
+
 end
