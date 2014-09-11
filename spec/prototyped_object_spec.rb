@@ -57,9 +57,10 @@ describe PrototypedObject do
   end
 
   context 'un objeto' do
-    it 'no posee las propiedades de su prototipo' do
+    it 'posee las propiedades de su prototipo' do
       padre.set_property :propiedad, 100
-      expect{hijo.propiedad}.to raise_error NoMethodError
+      hijo.propiedad = 20
+      expect(hijo.propiedad).to eq(20)
     end
     it 'posee los metodos de su prototipo' do
       padre.set_method :metodo, proc{ 100 }
