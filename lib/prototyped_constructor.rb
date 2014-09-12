@@ -3,32 +3,30 @@ require_relative 'prototyped_object'
 
 class PrototypedConstructor
 
-  attr_accessor :prototype
-  attr_accessor :inicializacion
+  def self.new(proto_obj, *args)
 
-  def initialize(proto_obj, *args)
-    self.prototype = proto_obj
     bloque = args[0]
     if(bloque)
-      self.inicializacion = bloque
+      new_constructor = BlockConstructor.new(proto_obj, bloque)
+    else
+      new_constructor = OptionConstructor.new(proto_obj)
     end
-
+    new_constructor
   end
 
-  def new(*args)
-    nuevo_objeto = new_prototyped_object(self.prototype)
+  def self.copy(obj)
+    copy_constructor = CopyConstructor.new(obj)
+    copy_constructor
+  end
 
-    if(self.inicializacion)
-      self.inicializacion.call(nuevo_objeto, *args)
-    else
-      hash = args[0]
-      hash.each_pair {
-          |key, value|
-        nuevo_objeto.send("#{key}=", value)
-      }
+end
 
-    end
-    nuevo_objeto
+class BaseConstructor
+
+  attr_accessor :prototype
+
+  def initialize(proto_obj)
+    self.prototype = proto_obj
   end
 
   def new_prototyped_object(prototype)
@@ -38,15 +36,13 @@ class PrototypedConstructor
     nuevo_objeto
   end
 
-  def self.copy(obj)
-    copy_constructor = CopyConstructor.new(obj)
-    copy_constructor
-  end
+  def extended &block
 
+  end
 
 end
 
-class CopyConstructor < PrototypedConstructor
+class CopyConstructor < BaseConstructor
 
   def new
     obj = self.prototype
@@ -57,6 +53,36 @@ class CopyConstructor < PrototypedConstructor
       new_obj.instance_variable_set(variable, value)
     end
     new_obj
+  end
+end
+
+class BlockConstructor < BaseConstructor
+
+  attr_accessor :initialization_block
+
+  def initialize(proto_obj, block)
+    self.prototype = proto_obj
+    self.initialization_block = block
+  end
+
+  def new(*args)
+    nuevo_objeto = new_prototyped_object(self.prototype)
+    self.initialization_block.call(nuevo_objeto, *args)
+    nuevo_objeto
+  end
+
+end
+
+class OptionConstructor < BaseConstructor
+
+  def new(*args)
+    nuevo_objeto = new_prototyped_object(self.prototype)
+    hash = args[0]
+    hash.each_pair {
+        |key, value|
+      nuevo_objeto.send("#{key}=", value)
+    }
+    nuevo_objeto
   end
 
 end
