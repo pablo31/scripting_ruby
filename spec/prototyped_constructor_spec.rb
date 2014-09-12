@@ -34,4 +34,12 @@ describe 'Constructores' do
 
   end
 
+  it 'Parte 3' do
+
+    guerrero_constructor = PrototypedConstructor.copy(guerrero)
+    un_guerrero = guerrero_constructor.new
+    expect(un_guerrero.potencial_defensivo).to eq(10)
+
+  end
+
 end

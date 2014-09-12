@@ -16,9 +16,7 @@ class PrototypedConstructor
   end
 
   def new(*args)
-    nuevo_objeto = PrototypedObject.new
-    nuevo_objeto.metamodel = Metamodel.new
-    nuevo_objeto.set_prototype(self.prototype)
+    nuevo_objeto = new_prototyped_object(self.prototype)
 
     if(self.inicializacion)
       self.inicializacion.call(nuevo_objeto, *args)
@@ -33,5 +31,32 @@ class PrototypedConstructor
     nuevo_objeto
   end
 
+  def new_prototyped_object(prototype)
+    nuevo_objeto = PrototypedObject.new
+    nuevo_objeto.metamodel = Metamodel.new
+    nuevo_objeto.set_prototype(prototype)
+    nuevo_objeto
+  end
+
+  def self.copy(obj)
+    copy_constructor = CopyConstructor.new(obj)
+    copy_constructor
+  end
+
+
+end
+
+class CopyConstructor < PrototypedConstructor
+
+  def new
+    obj = self.prototype
+    new_obj = self.new_prototyped_object(obj)
+    obj.instance_variables.each do
+    |variable|
+      value = obj.instance_variable_get(variable)
+      new_obj.instance_variable_set(variable, value)
+    end
+    new_obj
+  end
 
 end
