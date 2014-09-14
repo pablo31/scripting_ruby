@@ -59,18 +59,15 @@ class PrototypedObject
   end
 
   def metamodel
-    if(!@metamodel)
-      @metamodel = Metamodel.new
-    end
-    @metamodel
+    @metamodel ||= Metamodel.new
   end
 
   def metamodel=(metamodel)
-    @metamodel= metamodel
+    @metamodel = metamodel
   end
 
   def parent_metamodel=(parent_metamodel)
-    metamodel.parent_metamodel= parent_metamodel
+    metamodel.parent_metamodel = parent_metamodel
   end
 
   def clone

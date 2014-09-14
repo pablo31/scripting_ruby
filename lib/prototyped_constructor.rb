@@ -17,7 +17,6 @@ class PrototypedConstructor
 
   def new(*args)
     nuevo_objeto = PrototypedObject.new
-    nuevo_objeto.metamodel = Metamodel.new
     nuevo_objeto.set_prototype(self.prototype)
 
     if(self.inicializacion)
