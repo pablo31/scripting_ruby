@@ -3,11 +3,9 @@ require_relative 'spec_helper'
 describe 'Azucar Sintactico' do
 
   it 'Setear una variable' do
-
     guerrero_proto = PrototypedObject.new
     guerrero_proto.energia = 100
     expect(guerrero_proto.energia).to eq(100)
-
   end
 
   it 'Setear un método' do
@@ -34,6 +32,26 @@ describe 'Azucar Sintactico' do
     un_guerrero = Guerrero.new
     Guerrero.new.atacar_a(un_guerrero)
     expect(un_guerrero.energia).to eq(80)
+  end
+
+
+  it 'Parte 2' do
+    guerrero_proto = PrototypedObject.new {
+      energia = 100
+      potencial_ofensivo = 30
+      potencial_defensivo = 10
+      atacar_a = proc {|otro_guerrero|
+        if(otro_guerrero.potencial_defensivo < self.potencial_ofensivo)
+          otro_guerrero.recibe_danio(self.potencial_ofensivo - otro_guerrero.potencial_defensivo)
+        end}
+      recibe_danio = proc { |danio|
+        self.energia = self.energia - danio}
+    }
+
+    nuevo_guerrero = PrototypedObject.new
+    nuevo_guerrero.set_prototype(guerrero_proto)
+
+    expect(guerrero_proto.energia).to eq(100)
   end
 
 end

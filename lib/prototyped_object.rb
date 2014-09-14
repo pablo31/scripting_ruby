@@ -45,9 +45,9 @@ class PrototypedObject
       result = self.instance_exec(*args, &method)
     else
       name = name.to_s
-      raise NoMethodError if name[name.length-1] != "="
+      raise(NoMethodError,"No existe el metodo #{name}")  if name[name.length-1] != "="
       value = args[0]
-      raise NoMethodError unless value
+      raise(NoMethodError,"No existe el metodo #{name}") unless value
       name = name.chop # Se elimina el caracter '=' del metodo
       self.set(name, value)
     end
@@ -56,11 +56,6 @@ class PrototypedObject
   end
 
   # Constructor que permite asignar diversas variables
-
-  def initialize &block
-    # instance_exec self, block
-    # TODO
-  end
 
   def metamodel
     @metamodel ||= Metamodel.new
@@ -103,5 +98,13 @@ class PrototypedObject
     created_clone.metamodel = obj.metamodel.clone
 
     created_clone
+  end
+
+  def initialize &block
+    super
+    if block_given?
+      self.instance_eval(&block)
+    end
+    self
   end
 end
