@@ -3,11 +3,9 @@ require_relative 'prototyped_object'
 
 class PrototypedConstructor
 
-  def self.new(proto_obj, *args)
-
-    bloque = args[0]
-    if(bloque)
-      new_constructor = BlockConstructor.new(proto_obj, bloque)
+  def self.new(proto_obj, proc=nil, &block)
+    if proc ||= block
+      new_constructor = BlockConstructor.new(proto_obj, proc)
     else
       new_constructor = OptionConstructor.new(proto_obj)
     end
@@ -15,8 +13,7 @@ class PrototypedConstructor
   end
 
   def self.copy(obj)
-    copy_constructor = CopyConstructor.new(obj)
-    copy_constructor
+    CopyConstructor.new(obj)
   end
 
 end
@@ -30,31 +27,24 @@ class BaseConstructor
     self.prototype = proto_obj
   end
 
-  def new_prototyped_object(prototype)
-    nuevo_objeto = PrototypedObject.new
-    nuevo_objeto.set_prototype(prototype)
-    nuevo_objeto
-  end
-
   def new(*args)
-    nuevo_objeto = self.new_prototyped_object(self.prototype)
-    initialization(nuevo_objeto, *args)
-    nuevo_objeto
+    obj = PrototypedObject.new
+    obj.set_prototype(self.prototype)
+    initialization(obj, *args)
+    obj
   end
 
-  def initialization(nuevo_objeto, *args)
-
+  def initialization(new_obj, *args)
     if(super_constructor)
       arguments_needed = self.arguments_needed
-     arguments_total = args.length
-     self_arguments = args.drop(arguments_total - arguments_needed)
-     self.initialize_object(nuevo_objeto, *self_arguments)
-     super_arguments = args.take(arguments_total - arguments_needed)
-     super_constructor.initialize_object(nuevo_objeto, *super_arguments)
+      arguments_total = args.length
+      self_arguments = args.drop(arguments_total - arguments_needed)
+      self.initialize_object(new_obj, *self_arguments)
+      super_arguments = args.take(arguments_total - arguments_needed)
+      super_constructor.initialize_object(new_obj, *super_arguments)
     else
-      self.initialize_object(nuevo_objeto, *args)
+      self.initialize_object(new_obj, *args)
     end
-
   end
 
   def extended &block
@@ -69,8 +59,7 @@ end
 class CopyConstructor < BaseConstructor
 
   def initialize_object(new_obj)
-    self.prototype.instance_variables.each do
-    |variable|
+    self.prototype.instance_variables.each do |variable|
       value = self.prototype.instance_variable_get(variable)
       new_obj.instance_variable_set(variable, value)
     end
@@ -103,12 +92,10 @@ end
 
 class OptionConstructor < BaseConstructor
 
-  def initialize_object(nuevo_objeto, *args)
-    hash = args[0]
-    hash.each_pair {
-        |key, value|
+  def initialize_object(nuevo_objeto, hash)
+    hash.each_pair do |key, value|
       nuevo_objeto.send("#{key}=", value)
-    }
+    end
   end
 
   def arguments_needed
