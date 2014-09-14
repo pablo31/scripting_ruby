@@ -37,21 +37,25 @@ describe 'Azucar Sintactico' do
 
   it 'Parte 2' do
     guerrero_proto = PrototypedObject.new {
-      energia = 100
-      potencial_ofensivo = 30
-      potencial_defensivo = 10
-      atacar_a = proc {|otro_guerrero|
+      self.energia = 100
+      self.potencial_ofensivo = 30
+      self.potencial_defensivo = 10
+      self.atacar_a = proc {|otro_guerrero|
         if(otro_guerrero.potencial_defensivo < self.potencial_ofensivo)
           otro_guerrero.recibe_danio(self.potencial_ofensivo - otro_guerrero.potencial_defensivo)
         end}
-      recibe_danio = proc { |danio|
+      self.recibe_danio = proc { |danio|
         self.energia = self.energia - danio}
     }
 
-    nuevo_guerrero = PrototypedObject.new
-    nuevo_guerrero.set_prototype(guerrero_proto)
-
+    # Se controla que se hayan asignado todos los atributos
     expect(guerrero_proto.energia).to eq(100)
+    expect(guerrero_proto.potencial_ofensivo).to eq(30)
+    expect(guerrero_proto.potencial_defensivo).to eq(10)
+
+    # Se controla que se hayan asignado los métodos 'atacar_a' y 'recibe_danio' y que devuelve lo que corresponde.
+    otro_guerrero = guerrero_proto.clone
+    expect(otro_guerrero.atacar_a(guerrero_proto)).to eq(80)
   end
 
 end
