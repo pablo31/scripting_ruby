@@ -1,5 +1,4 @@
-require 'rspec'
-require_relative '../lib/prototyped_constructor'
+require_relative 'spec_helper'
 
 describe 'Azucar Sintactico' do
 

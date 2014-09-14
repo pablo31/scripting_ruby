@@ -1,5 +1,4 @@
-require 'rspec'
-require_relative '../lib/prototyped_object'
+require_relative 'spec_helper'
 
 describe PrototypedObject do
 

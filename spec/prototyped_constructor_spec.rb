@@ -1,5 +1,4 @@
-require 'rspec'
-require_relative '../lib/prototyped_constructor'
+require_relative 'spec_helper'
 
 describe 'Constructores' do
 
@@ -12,29 +11,29 @@ describe 'Constructores' do
   end
 
   it 'Parte 1' do
-    Guerrero = PrototypedConstructor.new(guerrero, proc {
+    guerrero_class = PrototypedConstructor.new(guerrero, proc {
       |guerrero_nuevo, una_energia, un_potencial_ofensivo, un_potencial_defensivo|
       guerrero_nuevo.energia = una_energia
       guerrero_nuevo.potencial_ofensivo = un_potencial_ofensivo
       guerrero_nuevo.potencial_defensivo = un_potencial_defensivo
     })
-    un_guerrero = Guerrero.new(100, 30, 10)
+    un_guerrero = guerrero_class.new(100, 30, 10)
     expect(un_guerrero.energia).to eq(100)
     expect(un_guerrero.potencial_ofensivo).to eq(30)
     expect(un_guerrero.potencial_defensivo).to eq(10)
   end
 
   it 'Parte 2' do
-    Guerrero = PrototypedConstructor.new(guerrero)
-    un_guerrero = Guerrero.new energia: 100, potencial_ofensivo: 30, potencial_defensivo: 10
+    guerrero_class = PrototypedConstructor.new(guerrero)
+    un_guerrero = guerrero_class.new energia: 100, potencial_ofensivo: 30, potencial_defensivo: 10
     expect(un_guerrero.energia).to eq(100)
     expect(un_guerrero.potencial_ofensivo).to eq(30)
     expect(un_guerrero.potencial_defensivo).to eq(10)
   end
 
   it 'Parte 3' do
-    Guerrero = PrototypedConstructor.copy(guerrero)
-    un_guerrero = Guerrero.new
+    guerrero_class = PrototypedConstructor.copy(guerrero)
+    un_guerrero = guerrero_class.new
     expect(un_guerrero.energia).to eq(100)
     expect(un_guerrero.potencial_defensivo).to eq(10)
     expect(un_guerrero.potencial_ofensivo).to eq(30)
