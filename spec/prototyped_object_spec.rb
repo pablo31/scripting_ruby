@@ -74,26 +74,12 @@ describe PrototypedObject do
       hijo.set_method :metodo, proc{ 100 }
       expect{padre.metodo}.to raise_error NoMethodError
     end
-  end
-
-  it 'verificacion de estados' do
-    class Guerrero < PrototypedObject
-      attr_accessor :energia
+    it 'no posee el estado de su padre' do
+      padre.set_property :propiedad, 100
+      hijo.propiedad = 20
+      expect(padre.propiedad).to eq(100)
+      expect(hijo.propiedad).to eq(20)
     end
-
-    atila = Guerrero.new
-    legolas = Guerrero.new
-    atila.energia = 100
-    legolas.energia = 20
-
-    atila.set_method(:curarse , proc{ self.energia += 20})
-
-    legolas.set_prototype(atila)
-
-
-    expect(atila.curarse).to eq(120)
-    expect(legolas.curarse).to eq(40)
-
   end
 
   # tests de integracion
