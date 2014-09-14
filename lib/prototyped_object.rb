@@ -107,4 +107,8 @@ class PrototypedObject
     end
     self
   end
+
+  def add_prototype proto_obj
+    # TODO
+  end
 end

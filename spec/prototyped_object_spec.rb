@@ -4,11 +4,10 @@ describe PrototypedObject do
 
   # parte 1
 
-  let :objeto do
-    PrototypedObject.new
-  end
-
   context 'set_property' do
+    let :objeto do
+      PrototypedObject.new
+    end
     it 'permite definir una nueva propiedad' do
       objeto.set_property(:nueva_propiedad, 100)
       expect(objeto.nueva_propiedad).to eq(100)
@@ -22,6 +21,9 @@ describe PrototypedObject do
   end
 
   context 'set_method' do
+    let :objeto do
+      PrototypedObject.new
+    end
     it 'permite definir un nuevo metodo' do
       objeto.set_method(:nombre_metodo, proc {2})
       expect(objeto.nombre_metodo).to eq(2)
@@ -47,16 +49,15 @@ describe PrototypedObject do
 
   # parte 2
 
-  let :padre do
-    PrototypedObject.new
-  end
-  let :hijo do
-    obj = PrototypedObject.new
-    obj.set_prototype(padre)
-    obj
-  end
-
   context 'un objeto' do
+    let :padre do
+      PrototypedObject.new
+    end
+    let :hijo do
+      obj = PrototypedObject.new
+      obj.set_prototype(padre)
+      obj
+    end
     it 'posee las propiedades de su prototipo' do
       padre.set_property :propiedad, 100
       hijo.propiedad = 20
@@ -248,7 +249,37 @@ describe PrototypedObject do
 
     expect {otro_guerrero.sanar}.to raise_error(NoMethodError)
 
+  end
 
+  context 'un objeto con multiples prototipos' do
+
+    let :first_parent do
+      PrototypedObject.new
+    end
+    let :last_parent do
+      PrototypedObject.new
+    end
+    let :object do
+      obj = PrototypedObject.new
+      obj.add_prototype first_parent
+      obj.add_prototype last_parent
+      obj
+    end
+
+    it 'busca el metodo en sus prototipos' do
+      last_parent.set(:metodo, proc { 10 })
+      expect(object.metodo).to eq(10)
+    end
+
+    it 'llama al metodo de su ultimo prototipo agregado' do
+      first_parent.set(:metodo, proc { 10 })
+      last_parent.set(:metodo, proc { 20 })
+      expect(object.metodo).to eq(20)
+    end
+
+    it 'falla si ninguno de sus prototipos posee el metodo' do
+      expect{object.metodo}.to raise_error NoMethodError
+    end
   end
 
 end
