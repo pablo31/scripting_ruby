@@ -10,6 +10,7 @@
 /tmp/
 
 ## Specific to RubyMotion:
+.idea
 .dat*
 .repl_history
 build/
