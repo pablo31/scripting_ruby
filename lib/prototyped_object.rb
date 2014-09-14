@@ -39,15 +39,27 @@ class PrototypedObject
 
   def method_missing name, *args, &block
     # TODO
-    method = metamodel.get_method name.to_sym
+      method = metamodel.get_method name.to_sym
 
     if(method)
       result = self.instance_exec(*args, &method)
     else
-      raise NoMethodError
+      nombre = name.to_s
+      if (!args[0])
+        raise NoMethodError
+        end
+      if (nombre[nombre.length-1] != "=")
+        raise NoMethodError
+      end
+      nombre = nombre.chop.to_sym   #Se elimina el caracter '=' del metodo
+      if (args[0].class == Proc)
+        self.set_method(nombre,args[0])
+      else
+        self.set_property(nombre,args[0])
+      end
     end
 
-    result
+  result
   end
 
   # Constructor que permite asignar diversas variables
