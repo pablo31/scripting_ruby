@@ -4,24 +4,20 @@ class PrototypedObject
 
   # Logica inicial
 
+  def set_method name, block
+    metamodel.add_method name.to_sym, block
+  end
+
   def set_property name, value
     self.instance_variable_set("@#{name}", value)
-    crear_getter_y_setter(name)
-  end
-
-  def crear_getter_y_setter(name)
-    self.set_method(name, proc { self.instance_variable_get("@#{name}") })
-
-    self.set_method("#{name}=".to_sym, proc {
-        |valor|
-      self.instance_variable_set("@#{name}", valor)
+    
+    self.set_method(name, proc {
+      self.instance_variable_get("@#{name}")
     })
 
-  end
-
-  def set_method name, block
-    #self.define_singleton_method(name, block)
-    metamodel.add_method name, block
+    self.set_method("#{name}=".to_sym, proc { |new_value|
+      self.instance_variable_set("@#{name}", new_value)
+    })
   end
 
   def set_prototype obj
@@ -30,36 +26,33 @@ class PrototypedObject
 
   # Para ver mas adelante: funcion que setea una variable o metodo indistintamente
 
-  # def set name, value, &block
-  #   define_method(name, &block) and return if block_given?
-  #   # TODO
-  # end
+  def set name, value=nil, &block
+    value ||= block
+    raise('Se debe especificar un valor o bloque de codigo para la asignacion') unless value
+    if value.is_a? Proc
+      set_method(name, value)
+    else
+      set_property(name, value)
+    end
+  end
 
   # Asignacion "a la javascript"
 
   def method_missing name, *args, &block
-    # TODO
-      method = metamodel.get_method name.to_sym
+    method = metamodel.get_method name.to_sym
 
     if(method)
       result = self.instance_exec(*args, &method)
     else
-      nombre = name.to_s
-      if (!args[0])
-        raise NoMethodError
-        end
-      if (nombre[nombre.length-1] != "=")
-        raise NoMethodError
-      end
-      nombre = nombre.chop.to_sym   #Se elimina el caracter '=' del metodo
-      if (args[0].class == Proc)
-        self.set_method(nombre,args[0])
-      else
-        self.set_property(nombre,args[0])
-      end
+      name = name.to_s
+      raise NoMethodError if name[name.length-1] != "="
+      value = args[0]
+      raise NoMethodError unless value
+      name = name.chop # Se elimina el caracter '=' del metodo
+      self.set(name, value)
     end
 
-  result
+    result
   end
 
   # Constructor que permite asignar diversas variables
@@ -67,7 +60,6 @@ class PrototypedObject
   def initialize &block
     # instance_exec self, block
     # TODO
-
   end
 
   def metamodel
