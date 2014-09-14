@@ -47,11 +47,11 @@ class BaseConstructor
 
     if(super_constructor)
       arguments_needed = self.arguments_needed
-      arguments_total = args.length
-      self_arguments = args.drop(arguments_total - arguments_needed)
-      self.initialize_object(nuevo_objeto, *self_arguments)
-      super_arguments = args.take(arguments_total - arguments_needed)
-      super_constructor.initialize_object(nuevo_objeto, *super_arguments)
+     arguments_total = args.length
+     self_arguments = args.drop(arguments_total - arguments_needed)
+     self.initialize_object(nuevo_objeto, *self_arguments)
+     super_arguments = args.take(arguments_total - arguments_needed)
+     super_constructor.initialize_object(nuevo_objeto, *super_arguments)
     else
       self.initialize_object(nuevo_objeto, *args)
     end
@@ -60,7 +60,7 @@ class BaseConstructor
 
   def extended &block
     new_prototype = self.prototype.clone
-    block.call(new_prototype)
+    #block.call(new_prototype)
     new_constructor = BlockConstructor.new(new_prototype, block)
     new_constructor.super_constructor = self
     new_constructor
