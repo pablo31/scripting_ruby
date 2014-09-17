@@ -21,6 +21,8 @@ class Metamodel
     method
   end
 
+  # detalle de estilo
+  # attr_accessor :parent_metamodel => es lo mismo que estos 2 accessors
   def parent_metamodel=(parent_metamodel)
     @parent_metamodel = parent_metamodel
   end

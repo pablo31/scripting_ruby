@@ -42,17 +42,28 @@ class PrototypedObject
     method = metamodel.get_method name.to_sym
 
     if(method)
+      # comentario de ruby: cuando un bloque se llama con "instance_exec" ya no le puedo
+      # pasar un bloque implícito (los que tienen el &block) porque ya lo está usando
+      # la llamada al instance_exec (conclusión, mis "métodos" no pueden recibir bloques implícitos)
       result = self.instance_exec(*args, &method)
     else
+
+      #refactor del código repetido de abajo: agreguen métodos más descriptivos + quiten la repetición de codigo
+
+      # los strings entienden "end_with?", pero estaría bueno tener un método más descriptivo tipo "es setter" o algo así
       name = name.to_s
-      raise(NoMethodError,"No existe el metodo #{name}")  if name[name.length-1] != "="
+      raise(NoMethodError,"No existe el metodo #{name}")  if !es_setter(name)
       value = args[0]
-      raise(NoMethodError,"No existe el metodo #{name}") unless value
+      raise(NoMethodError,"No existe el metodo #{name}") unless value # value? no entiendo esta validación
       name = name.chop # Se elimina el caracter '=' del metodo
       self.set(name, value)
     end
 
     result
+  end
+
+  def es_setter(name)
+    name[name.length-1] == "="
   end
 
   # Constructor que permite asignar diversas variables
@@ -61,6 +72,7 @@ class PrototypedObject
     @metamodel ||= Metamodel.new
   end
 
+  # attr_accessor :metamodel
   def metamodel=(metamodel)
     @metamodel = metamodel
   end
@@ -69,6 +81,10 @@ class PrototypedObject
     metamodel.parent_metamodel = parent_metamodel
   end
 
+  # El "clone" del tp estaba pensado para que ver que pasaba con el clone de ruby
+  # que copia los valores de las variables de intancia.
+  # En particular creo que es uno de los puntos menos importantes del tp que, en caso
+  # de que complique / conflictúe alguna feature no me preocuparía por eso
   def clone
     create_clone self
   end
@@ -89,8 +105,12 @@ class PrototypedObject
               value)
         end
       rescue => exception
+        # no!!! tirar exceptions abajo de la alfombra es pecado :P
+
         puts exception.backtrace
         #raise exception # always reraise
+
+        # me gusta el comentario de "always reraise" pero cuando no está comentada la línea :)
       end
 
     end

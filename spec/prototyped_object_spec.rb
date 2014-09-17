@@ -33,6 +33,8 @@ describe PrototypedObject do
     end
   end
 
+  # este test también les conflictuaba con los requerimientos de los últimos puntos?
+
   #context 'set' do
   #  it 'permite definir un metodo o propiedad indistintamente' do
   #    objeto.set(:nueva_propiedad, 15)
@@ -68,6 +70,7 @@ describe PrototypedObject do
       expect(hijo.metodo).to eq 100
     end
     it 'no posee las propiedades de sus hijos' do
+      # por que le pasan un proc a set_property?
       hijo.set_property :propiedad, proc{ 100 }
       expect{padre.propiedad}.to raise_error NoMethodError
     end
@@ -80,6 +83,16 @@ describe PrototypedObject do
       hijo.propiedad = 20
       expect(padre.propiedad).to eq(100)
       expect(hijo.propiedad).to eq(20)
+    end
+    it 'no comparte el estado del padre' do
+      padre.set_property :propiedad, 100
+      expect(hijo.propiedad).to eq(nil)
+    end
+    it 'puede usar métodos de un segundo padre' do
+      segundo_padre = PrototypedObject.new
+      segundo_padre.set_method :abuelo, proc {15}
+      padre.set_prototype segundo_padre
+      expect(hijo.abuelo).to eq(15)
     end
   end
 
