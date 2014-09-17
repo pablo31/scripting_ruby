@@ -24,8 +24,6 @@ class PrototypedObject
     self.parent_metamodel = obj.metamodel
   end
 
-  # Para ver mas adelante: funcion que setea una variable o metodo indistintamente
-
   def set name, value=nil, &block
     value ||= block
     raise('Se debe especificar un valor o bloque de codigo para la asignacion') unless value
@@ -55,14 +53,9 @@ class PrototypedObject
     result
   end
 
-  # Constructor que permite asignar diversas variables
-
+  attr_writer :metamodel
   def metamodel
     @metamodel ||= Metamodel.new
-  end
-
-  def metamodel=(metamodel)
-    @metamodel = metamodel
   end
 
   def parent_metamodel=(parent_metamodel)
@@ -70,16 +63,11 @@ class PrototypedObject
   end
 
   def clone
-    create_clone self
-  end
-
-  def create_clone(obj)
-
     created_clone = PrototypedObject.new
-    obj.instance_variables
-    obj.instance_variables.each do |ivar_name|
+    self.instance_variables
+    self.instance_variables.each do |ivar_name|
       begin
-        value = obj.instance_variable_get(ivar_name)
+        value = self.instance_variable_get(ivar_name)
         #if(value)
         #  value = value.clone
         #end
@@ -94,21 +82,17 @@ class PrototypedObject
       end
 
     end
-
-    created_clone.metamodel = obj.metamodel.clone
-
+    created_clone.metamodel = self.metamodel.clone
     created_clone
   end
 
   def initialize &block
     super
-    if block_given?
-      self.instance_eval(&block)
-    end
-    self
+    self.instance_eval(&block) if block_given?
   end
 
   def add_prototype proto_obj
     # TODO
   end
+  
 end
