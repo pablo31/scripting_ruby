@@ -91,7 +91,7 @@ class PrototypedObject
     self.instance_eval(&block) if block_given?
   end
 
-  def add_prototype proto_obj
+  def set_prototypes proto_array
     # TODO
   end
 

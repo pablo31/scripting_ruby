@@ -274,9 +274,7 @@ describe PrototypedObject do
     end
     let :object do
       obj = PrototypedObject.new
-      obj.add_prototype first_parent
-      obj.add_prototype last_parent
-      obj
+      obj.set_prototypes([first_parent, last_parent])
     end
 
     it 'busca el metodo en sus prototipos' do
