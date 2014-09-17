@@ -38,16 +38,16 @@ class PrototypedObject
 
   # Asignacion "a la javascript"
 
-  def method_missing name, *args, &block
-    method = metamodel.get_method name.to_sym
+  def method_missing method_name, *args, &block
+    method = metamodel.get_method method_name.to_sym
 
     if(method)
       result = self.instance_exec(*args, &method)
     else
-      name = name.to_s
-      raise(NoMethodError,"No existe el metodo #{name}")  if name[name.length-1] != "="
+      name = method_name.to_s
+      super if name[name.length-1] != "="
       value = args[0]
-      raise(NoMethodError,"No existe el metodo #{name}") unless value
+      super unless value
       name = name.chop # Se elimina el caracter '=' del metodo
       self.set(name, value)
     end
