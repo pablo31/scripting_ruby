@@ -2,19 +2,6 @@ require_relative 'spec_helper'
 
 describe 'Azucar Sintactico' do
 
-  it 'Setear una variable' do
-    guerrero_proto = PrototypedObject.new
-    guerrero_proto.energia = 100
-    expect(guerrero_proto.energia).to eq(100)
-  end
-
-  it 'Setear un método' do
-    guerrero_proto = PrototypedObject.new
-    guerrero_proto.energia = 100
-    guerrero_proto.reducir_energia = proc {self.energia = self.energia - 20}
-    expect(guerrero_proto.reducir_energia).to eq(80)
-  end
-
   it 'Parte 1' do
     guerrero_proto = PrototypedObject.new
     guerrero_proto.energia = 100

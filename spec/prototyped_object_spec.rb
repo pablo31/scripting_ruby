@@ -13,17 +13,10 @@ describe PrototypedObject do
       expect(objeto.nueva_propiedad).to eq(100)
       expect(objeto.nueva_propiedad = 200).to eq(200)
     end
-    ### Comento este text porque se contradice con la parte de azucar sintactico
-    #it 'arroja excepcion si no se le asigno la propiedad' do
-    #  expect{objeto.nueva_propiedad}.to raise_error NoMethodError
-    #  expect{objeto.nueva_propiedad = 350}.to raise_error NoMethodError
-    #end
   end
 
   context 'set_method' do
-    let :objeto do
-      PrototypedObject.new
-    end
+    let(:objeto){ PrototypedObject.new }
     it 'permite definir un nuevo metodo' do
       objeto.set_method(:nombre_metodo, proc {2})
       expect(objeto.nombre_metodo).to eq(2)
@@ -33,19 +26,20 @@ describe PrototypedObject do
     end
   end
 
-  #context 'set' do
-  #  it 'permite definir un metodo o propiedad indistintamente' do
-  #    objeto.set(:nueva_propiedad, 15)
-  #   expect(objeto.nueva_propiedad).to eq(15)
-  #   objeto.set(:nuevo_proc, proc { 320 + 1 })
-  #   expect(objeto.nuevo_proc).to eq(321)
-  #   objeto.set(:nuevo_metodo) { 670 + 8 }
-  #   expect(objeto.nuevo_metodo).to eq(678)
-  # end
-  # it 'arroja excepcion si no se le asigna un metodo o propiedad' do
-  #   expect{objeto.set(:metodo_o_propiedad)}.to raise_error
-  # end
-  #end
+  context 'set' do
+    let(:objeto){ PrototypedObject.new }
+    it 'permite definir un metodo o propiedad indistintamente' do
+      objeto.set(:nueva_propiedad, 15)
+      expect(objeto.nueva_propiedad).to eq(15)
+      objeto.set(:nuevo_proc, proc { 320 + 1 })
+      expect(objeto.nuevo_proc).to eq(321)
+      objeto.set(:nuevo_metodo) { 670 + 8 }
+      expect(objeto.nuevo_metodo).to eq(678)
+    end
+    it 'arroja excepcion si no se le asigna un metodo o propiedad' do
+      expect{objeto.set(:metodo_o_propiedad)}.to raise_error
+    end
+  end
 
   # parte 2
 
@@ -80,6 +74,22 @@ describe PrototypedObject do
       hijo.propiedad = 20
       expect(padre.propiedad).to eq(100)
       expect(hijo.propiedad).to eq(20)
+    end
+  end
+
+  # tests de azucar sintactico
+
+  context 'la asignacion a la javascript' do
+    let :objeto do
+      PrototypedObject.new
+    end
+    it 'permite definir una nueva propiedad' do
+      objeto.nueva_propiedad = 100
+      expect(objeto.nueva_propiedad).to eq 100
+    end
+    it 'permite definir un nuevo metodo' do
+      objeto.nombre_metodo { 2 }
+      expect(objeto.nombre_metodo).to eq 2
     end
   end
 
