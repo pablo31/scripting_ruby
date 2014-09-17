@@ -91,6 +91,9 @@ describe PrototypedObject do
       objeto.nombre_metodo { 2 }
       expect(objeto.nombre_metodo).to eq 2
     end
+    it 'no asume que algo no definido sea nil' do
+      expect{objeto.metodo_inexistente}.to raise_error NoMethodError
+    end
   end
 
   # tests de integracion
