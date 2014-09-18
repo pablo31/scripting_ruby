@@ -2,84 +2,64 @@ require_relative 'spec_helper'
 
 describe 'Metamodel' do
 
+  it 'PrototypedObject sin metodos por default' do
 
-  method_name = 'method_name'
-  method_name2 = 'method_name2'
-
-  it 'Metamodel sin metodos por default' do
-
-    metamodel = Metamodel.new
+    object = PrototypedObject.new
 
     #obtenemos los metodos
-    methods = metamodel.get_methods
+    methods = object.prototyped_methods
 
     #revisamos que no haya ninguno por default
     expect(methods).to be_empty
   end
 
-  it 'Metamodel permite agregar metodos y recuperarlos' do
+  it 'PrototypedObject permite agregar metodos y recuperarlos' do
 
     #construimos el metamodel con un metodo
-    metamodel = Metamodel.new
+    object = PrototypedObject.new
 
-    block = proc {
-        puts 'Cuerpo del bloque'
-    }
-
-    metamodel.add_method(method_name, block)
+    block = proc { u cant touch this }
+    object.set_method('a_method', block)
 
     #revisamos que el metodo haya sido agregado y sea el unico
-    expect(metamodel.get_methods.length).to eq(1)
-    expect(metamodel.get_method(method_name)).to eq(block)
+    expect(object.prototyped_methods.length).to eq(1)
+    expect(object.get_method('a_method')).to eq(block)
   end
 
-  it 'Metamodel permite agregar multiples metodos y recuperarlos' do
+  it 'PrototypedObject permite agregar multiples metodos y recuperarlos' do
 
     #creamos el metamodel
-    metamodel = Metamodel.new
+    object = PrototypedObject.new
 
     #agregamos el metodo 1
-    block = proc {
-      puts 'Cuerpo del bloque'
-    }
-
-    metamodel.add_method(method_name, block)
+    a_block = proc { hi! im a block }
+    object.set_method('a_method', a_block)
 
     #agregamos el metodo 2
-    block2 = proc {
-      puts 'Cuerpo del bloque 2'
-    }
-
-    metamodel.add_method(method_name2, block2)
+    another_block = proc { hi! im another block }
+    object.set_method('another_method', another_block)
 
     #revisamos que los metodos hayan sido agregados y sean unicos
-    expect(metamodel.get_methods.length).to eq(2)
-    expect(metamodel.get_method(method_name)).to eq(block)
-    expect(metamodel.get_method(method_name2)).to eq(block2)
+    expect(object.prototyped_methods.length).to eq(2)
+    expect(object.get_method('a_method')).to eq(a_block)
+    expect(object.get_method('another_method')).to eq(another_block)
   end
 
-  it 'Metamodel permite agregar un parent_metamodel con metodos y recuperarlos a traves del hijo' do
+  it 'PrototypedObject permite agregar un parent_metamodel con metodos y recuperarlos a traves del hijo' do
+    father = PrototypedObject.new
+    son = PrototypedObject.new
 
-    #creamos un metamodel vacio
-    metamodel = Metamodel.new
-
-    #creamos un parent_metamodel con un metodo
-    parent_metamodel = Metamodel.new
-
-    block = proc {
-      puts 'Cuerpo del bloque'
-    }
-    parent_metamodel.add_method(method_name, block)
+    block = proc { ruby blocks rlz }
+    father.set_method('a_method', block)
 
     #establecemos la relacion entre los metamodels
-    metamodel.parent_metamodel = parent_metamodel
-
+    son.set_prototype(father)
 
     #verificamos que el metamodel hijo no tenga metodos propios
-    expect(metamodel.get_methods.length).to eq(0)
+    expect(son.prototyped_methods.length).to eq(0)
 
     #verificamos que el metamodel hijo hereda los metodos del padre
-    expect(metamodel.get_method(method_name)).to eq(block)
+    expect(son.get_method('a_method')).to eq(block)
   end
 
 

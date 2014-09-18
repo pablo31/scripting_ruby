@@ -259,59 +259,32 @@ describe PrototypedObject do
     espadachin.sanar
     expect(espadachin.energia).to eq(110)
     #PARTE 3 FIN
-
-    expect {otro_guerrero.sanar}.to raise_error(NoMethodError)
-
   end
 
   context 'un objeto con multiples prototipos' do
-    # let :first_parent do
-    #   PrototypedObject.new
-    # end
-    # let :last_parent do
-    #   PrototypedObject.new
-    # end
-    # let :object do
-    #   obj = PrototypedObject.new
-    #   obj.set_prototypes([first_parent, last_parent])
-    # end
-
-    # it 'busca el metodo en sus prototipos' do
-    #   last_parent.set(:metodo, proc { 10 })
-    #   expect(object.metodo).to eq(10)
-    # end
-    #
-    # it 'llama al metodo de su ultimo prototipo agregado' do
-    #   first_parent.set(:metodo, proc { 10 })
-    #   last_parent.set(:metodo, proc { 20 })
-    #   expect(object.metodo).to eq(20)
-    # end
-
-    it 'falla si ninguno de sus prototipos posee el metodo' do
-      expect{object.metodo}.to raise_error NoMethodError
+    let :first_parent do
+      PrototypedObject.new
     end
-
-    it 'NUEVO busca el metodo en sus prototipos' do
-
-      first_parent = PrototypedObject.new
-      last_parent = PrototypedObject.new
-      object = PrototypedObject.new
-      object.set_prototypes([first_parent, last_parent])
-
+    let :last_parent do
+      PrototypedObject.new
+    end
+    let :object do
+      obj = PrototypedObject.new
+      obj.set_prototypes([first_parent, last_parent])
+      obj
+    end
+    it 'busca el metodo en sus prototipos' do
       last_parent.set(:metodo, proc { 10 })
       expect(object.metodo).to eq(10)
     end
-
-    it 'NUEVO llama al metodo de su ultimo prototipo agregado' do
-      first_parent = PrototypedObject.new
-      last_parent = PrototypedObject.new
-      object = PrototypedObject.new
-      object.set_prototypes([first_parent, last_parent])
-
-
+    
+    it 'llama al metodo de su ultimo prototipo agregado' do
       first_parent.set(:metodo, proc { 10 })
       last_parent.set(:metodo, proc { 20 })
       expect(object.metodo).to eq(20)
+    end
+    it 'falla si ninguno de sus prototipos posee el metodo' do
+      expect{object.metodo}.to raise_error NoMethodError
     end
   end
 end

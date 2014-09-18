@@ -1,11 +1,9 @@
-require_relative 'metamodel'
-
 class PrototypedObject
 
   # Logica inicial
 
   def set_method name, block
-    metamodel.add_method name.to_sym, block
+    prototyped_methods[name.to_sym] = block
   end
 
   def set_property name, value
@@ -20,8 +18,9 @@ class PrototypedObject
     })
   end
 
-  def set_prototype obj
-    self.parent_metamodel = obj.metamodel
+  def set_prototype prototype
+    prototypes_list.clear
+    prototypes_list << prototype
   end
 
   def set name, value=nil, &block
@@ -37,7 +36,7 @@ class PrototypedObject
   # Asignacion "a la javascript"
 
   def method_missing method_name, *args, &block
-    method = metamodel.get_method method_name.to_sym
+    method = get_method method_name
 
     if(method)
       result = self.instance_exec(*args, &method)
@@ -53,46 +52,61 @@ class PrototypedObject
     result
   end
 
-  attr_writer :metamodel
-  def metamodel
-    @metamodel ||= Metamodel.new
-  end
+  # def clone
+  #   created_clone = PrototypedObject.new
+  #   self.instance_variables
+  #   self.instance_variables.each do |ivar_name|
+  #     begin
+  #       value = self.instance_variable_get(ivar_name)
+  #       #if(value)
+  #       #  value = value.clone
+  #       #end
+  #       if(ivar_name != @metamodel)
+  #         created_clone.instance_variable_set(
+  #             ivar_name,
+  #             value)
+  #       end
+  #     rescue => exception
+  #       puts exception.backtrace
+  #       #raise exception # always reraise
+  #     end
 
-  def parent_metamodel=(parent_metamodel)
-    metamodel.parent_metamodel = parent_metamodel
-  end
-
-  def clone
-    created_clone = PrototypedObject.new
-    self.instance_variables
-    self.instance_variables.each do |ivar_name|
-      begin
-        value = self.instance_variable_get(ivar_name)
-        #if(value)
-        #  value = value.clone
-        #end
-        if(ivar_name != @metamodel)
-          created_clone.instance_variable_set(
-              ivar_name,
-              value)
-        end
-      rescue => exception
-        puts exception.backtrace
-        #raise exception # always reraise
-      end
-
-    end
-    created_clone.metamodel = self.metamodel.clone
-    created_clone
-  end
+  #   end
+  #   created_clone.metamodel = self.metamodel.clone
+  #   created_clone
+  # end
 
   def initialize &block
     super
     self.instance_eval(&block) if block_given?
   end
 
-  def set_prototypes proto_array
-    metamodel.set_prototypes(proto_array)
+  # ex metamodel
+
+  def get_method(name)
+    method = prototyped_methods[name.to_sym]
+    prototypes_list.each do |parent|
+      if !method
+        method = parent.get_method name
+      end
+      break if method
+    end
+    method
+  end
+
+  def set_prototypes(proto_array)
+    prototypes_list.clear
+    proto_array.reverse.each do |parent|
+      prototypes_list << parent
+    end
+  end
+
+  def prototyped_methods
+    @methods ||= Hash.new
+  end
+
+  def prototypes_list
+    @prototypes_list ||= Array.new
   end
 
 end

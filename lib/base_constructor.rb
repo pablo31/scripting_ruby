@@ -3,8 +3,8 @@ class BaseConstructor
   attr_accessor :prototype
   attr_accessor :super_constructor
 
-  def initialize(proto_obj)
-    self.prototype = proto_obj
+  def initialize(prototype)
+    self.prototype = prototype
   end
 
   def new(*args)
@@ -29,7 +29,6 @@ class BaseConstructor
 
   def new_prototyped_object(prototype)
     nuevo_objeto = PrototypedObject.new
-    nuevo_objeto.metamodel = Metamodel.new
     nuevo_objeto.set_prototype(prototype)
     nuevo_objeto
   end
@@ -43,27 +42,22 @@ class BaseConstructor
     prototipo_descartable = PrototypedObject.new
     block.call(prototipo_descartable)
     atributos = prototipo_descartable.instance_variables
-    atributos.delete(:@metamodel)
 
 
     #creo el nuevo bloque del constructor extendido
-    new_block = Proc.new {
-        |new_obj, *args|
+    new_block = proc do |new_obj, *args|
       array_asoc = atributos.zip(args)
-      array_asoc.each do
-      |element|
+      array_asoc.each do |element|
         attribute = element[0]
         value = element[1]
         new_obj.instance_variable_set(attribute, value)
       end
-    }
+    end
     new_constructor = BlockConstructor.new(new_prototype, new_block)
     new_constructor.super_constructor = self
 
-    new_constructor.define_singleton_method(:arguments_needed, Proc.new{
-
+    new_constructor.define_singleton_method(:arguments_needed, proc {
       self.initialization_block.parameters[1].length
-
     })
 
     new_constructor
