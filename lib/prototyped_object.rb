@@ -84,11 +84,13 @@ class PrototypedObject
   # ex metamodel
 
   def get_method(name)
-    method = prototyped_methods[name.to_sym]
+    prototyped_methods[name.to_sym] || get_prototype_method(name)
+  end
+
+  def get_prototype_method(name)
+    method = nil
     prototypes_list.each do |parent|
-      if !method
-        method = parent.get_method name
-      end
+      method = parent.get_method name
       break if method
     end
     method
@@ -107,6 +109,11 @@ class PrototypedObject
 
   def prototypes_list
     @prototypes_list ||= Array.new
+  end
+
+  def call_next method_name=nil
+    method = get_prototype_method(method_name)
+    self.instance_exec &method
   end
 
 end

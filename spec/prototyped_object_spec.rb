@@ -287,4 +287,31 @@ describe PrototypedObject do
       expect{object.metodo}.to raise_error NoMethodError
     end
   end
+
+  context 'call_next' do
+    let :parent do
+      PrototypedObject.new
+    end
+    let :object do
+      obj = PrototypedObject.new
+      obj.set_prototype(parent)
+      obj
+    end
+    it 'permite llamar al metodo de su prototipo' do
+      parent.set(:metodo, proc { 10 })
+      object.set(:metodo, proc { 5 + call_next(:metodo) })
+      expect(object.metodo).to eq(15)
+    end
+    it 'no depende del estado interno del padre' do
+      parent.set(:propiedad, 10)
+      parent.set(:metodo, proc { self.propiedad })
+      object.set(:propiedad, 15)
+      object.set(:metodo, proc { 5 + call_next(:metodo) })
+      expect(object.metodo).to eq(20)
+    end
+    # it 'arroja error si el padre no posee el metodo' do
+    #   object.set(:metodo, proc { call_next(:metodo) })
+    #   expect{object.metodo}.to raise_error NoMethodError
+    # end
+  end
 end
