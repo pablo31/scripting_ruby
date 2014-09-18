@@ -92,7 +92,7 @@ class PrototypedObject
   end
 
   def set_prototypes proto_array
-    # TODO
+    metamodel.set_prototypes(proto_array)
   end
 
 end

@@ -12,21 +12,31 @@ class Metamodel
   end
 
   def get_method(name)
+
     method = get_methods[name]
 
-    if (!method and parent_metamodel)
-      method = parent_metamodel.get_method name
-    end
+    metamodel_list.each { |current_metamodel|
+
+      if (!method and current_metamodel)
+        method = current_metamodel.get_method name
+      end
+
+      break if method
+    }
 
     method
   end
 
-  def parent_metamodel=(parent_metamodel)
-    @parent_metamodel = parent_metamodel
+  def parent_metamodel=(parent)
+    metamodel_list.clear
+    metamodel_list << parent
   end
 
-  def parent_metamodel
-    @parent_metamodel
+  def metamodel_list
+    if(!@metamodel_list)
+      @metamodel_list = []
+    end
+    @metamodel_list
   end
 
   def clone
@@ -37,5 +47,17 @@ class Metamodel
     end
 
     cloned_metamodel
+  end
+
+  def set_prototypes(proto_array)
+    metamodel_list.clear
+    proto_array.reverse.each { |parent|
+      if(parent.is_a?(Metamodel))
+        metamodel_list << parent
+      elsif(parent.is_a?(PrototypedObject))
+        metamodel_list << parent.metamodel
+      end
+    }
+
   end
 end
