@@ -16,7 +16,12 @@ class SugarBlockConstructor < BlockConstructor
   end
 
   def with_properties(list)
-    nuevo_constructor = ListConstructor.new(self.prototype, list)
+    nuevo_prototipo = self.prototype.clone
+    list.each do
+      |attribute|
+      nuevo_prototipo.set_property(attribute, nil)
+    end
+    nuevo_constructor = ListConstructor.new(nuevo_prototipo, list)
     nuevo_constructor
   end
 

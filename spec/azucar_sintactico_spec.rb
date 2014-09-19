@@ -96,21 +96,50 @@ describe 'Azucar Sintactico' do
 
     #Uso un list constructor pero podria usar cualquiera
     guerrero_constructor = PrototypedConstructor.create {
-      atacar_a = proc {|otro_guerrero|
+      self.atacar_a = proc {|otro_guerrero|
         if(otro_guerrero.potencial_defensivo < self.potencial_ofensivo)
           otro_guerrero.recibe_danio(self.potencial_ofensivo - otro_guerrero.potencial_defensivo)
         end}
-      recibe_danio = proc { |danio| self.energia = self.energia - danio}
+      self.recibe_danio = proc { |danio| self.energia = self.energia - danio}
     }.with_properties([:energia, :potencial_ofensivo, :potencial_defensivo])
 
 
     atila = guerrero_constructor.new(100, 50, 30)
     expect(atila.potencial_ofensivo).to eq(50)
     proto_guerrero = guerrero_constructor.prototype
-    proto_guerrero.potencial_ofensivo = proc {
+    proto_guerrero.atacar_a = proc {
       1000
     }
-    expect(atila.potencial_ofensivo).to eq(1000)
+
+    expect(atila.atacar_a).to eq(1000)
+
+  end
+
+  it 'Parte 7' do
+
+    guerrero = PrototypedObject.new
+    guerrero.set_property(:energia, 100)
+    guerrero.set_property(:potencial_defensivo, 10)
+    guerrero.set_property(:potencial_ofensivo, 30)
+
+    guerrero_constructor = PrototypedConstructor.new(guerrero, proc {
+        |guerrero_nuevo, una_energia, un_potencial_ofensivo, un_potencial_defensivo|
+      guerrero_nuevo.energia = una_energia
+      guerrero_nuevo.potencial_ofensivo = un_potencial_ofensivo
+      guerrero_nuevo.potencial_defensivo = un_potencial_defensivo
+    })
+
+    espadachin_constructor = guerrero_constructor.extended {
+        |una_habilidad, un_potencial_espada|
+      self.habilidad = una_habilidad
+      self.potencial_espada = un_potencial_espada
+      self.potencial_ofensivo = proc {
+        @potencial_ofensivo + self.potencial_espada * self.habilidad
+      }
+    }
+
+    espadachin = espadachin_constructor.new(100, 30, 10, 0.5, 30)
+    expect(espadachin.habilidad).to eq(0.5)
 
   end
 

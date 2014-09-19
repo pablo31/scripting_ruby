@@ -17,7 +17,7 @@ class ListConstructor < BaseConstructor
       |element|
       atributo = element[0]
       valor = element[1]
-      nuevo_objeto.set_property(atributo, valor)
+      nuevo_objeto.send(atributo.to_s+"=", valor)
     end
   end
 
