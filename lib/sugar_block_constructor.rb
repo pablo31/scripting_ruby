@@ -8,4 +8,11 @@ class SugarBlockConstructor < BlockConstructor
     self.initialization_block.parameters.length
   end
 
+  def with &block
+    if block_given?
+      self.initialization_block = block
+    end
+    self
+  end
+
 end

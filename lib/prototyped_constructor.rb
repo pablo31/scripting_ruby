@@ -24,4 +24,11 @@ class PrototypedConstructor
     CopyConstructor.new(obj)
   end
 
+  def self.create &block
+    new_proto = PrototypedObject.new
+    new_proto.instance_eval &block
+    nuevo_constructor = SugarBlockConstructor.new(new_proto, nil)
+    nuevo_constructor
+  end
+
 end
