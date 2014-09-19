@@ -79,4 +79,39 @@ describe 'Azucar Sintactico' do
 
   end
 
+  it 'Parte 5' do
+    guerrero_constructor = PrototypedConstructor.create {
+      atacar_a = proc {|otro_guerrero|
+        if(otro_guerrero.potencial_defensivo < self.potencial_ofensivo)
+          otro_guerrero.recibe_danio(self.potencial_ofensivo - otro_guerrero.potencial_defensivo)
+        end}
+      recibe_danio = proc { |danio| self.energia = self.energia - danio}
+    }.with_properties([:energia, :potencial_ofensivo, :potencial_defensivo])
+
+    guerrero = guerrero_constructor.new(100, 30, 10)
+    expect(guerrero.energia).to eq(100)
+  end
+
+  it 'Parte 6' do
+
+    #Uso un list constructor pero podria usar cualquiera
+    guerrero_constructor = PrototypedConstructor.create {
+      atacar_a = proc {|otro_guerrero|
+        if(otro_guerrero.potencial_defensivo < self.potencial_ofensivo)
+          otro_guerrero.recibe_danio(self.potencial_ofensivo - otro_guerrero.potencial_defensivo)
+        end}
+      recibe_danio = proc { |danio| self.energia = self.energia - danio}
+    }.with_properties([:energia, :potencial_ofensivo, :potencial_defensivo])
+
+
+    atila = guerrero_constructor.new(100, 50, 30)
+    expect(atila.potencial_ofensivo).to eq(50)
+    proto_guerrero = guerrero_constructor.prototype
+    proto_guerrero.potencial_ofensivo = proc {
+      1000
+    }
+    expect(atila.potencial_ofensivo).to eq(1000)
+
+  end
+
 end
