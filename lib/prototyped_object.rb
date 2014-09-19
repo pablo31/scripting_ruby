@@ -37,22 +37,25 @@ class PrototypedObject
 
   def method_missing method_name, *args, &block
 
+    result = nil
+    begin
+      self.executing_method_stack.push method_name
 
-    self.executing_method_stack.push method_name
+      method = get_method method_name
 
-    method = get_method method_name
-
-    if(method)
-      result = self.instance_exec(*args, &method)
-    else
-      name = method_name.to_s
-      super if name[name.length-1] != "=" && !block_given?
-      value = args[0] || block
-      super unless value
-      name = name.gsub('=', '') # Se elimina el caracter '=' del metodo
-      self.set(name, value)
+      if(method)
+        result = self.instance_exec(*args, &method)
+      else
+        name = method_name.to_s
+        super if name[name.length-1] != "=" && !block_given?
+        value = args[0] || block
+        super unless value
+        name = name.gsub('=', '') # Se elimina el caracter '=' del metodo
+        self.set(name, value)
+      end
+    ensure
+      self.executing_method_stack.pop
     end
-    self.executing_method_stack.pop
 
     result
   end
