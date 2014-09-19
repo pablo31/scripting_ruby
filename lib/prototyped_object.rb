@@ -111,7 +111,7 @@ class PrototypedObject
     @prototypes_list ||= Array.new
   end
 
-  def call_next method_name=nil
+  def call_next
     method = get_prototype_method(method_name)
     self.instance_exec &method
   end
