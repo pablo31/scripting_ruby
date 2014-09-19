@@ -130,7 +130,7 @@ class PrototypedObject
     method = get_prototype_method(method_name)
 
     if(!method)
-      raise NoMethodError, "No se encontro el metodo ´#{name}´"
+      raise NoMethodError, "No se encontro el metodo ´#{method_name}´"
     end
 
     self.instance_exec &method
