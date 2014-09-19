@@ -36,6 +36,10 @@ class PrototypedObject
   # Asignacion "a la javascript"
 
   def method_missing method_name, *args, &block
+
+
+    self.executing_method_stack.push method_name
+
     method = get_method method_name
 
     if(method)
@@ -48,6 +52,7 @@ class PrototypedObject
       name = name.gsub('=', '') # Se elimina el caracter '=' del metodo
       self.set(name, value)
     end
+    self.executing_method_stack.pop
 
     result
   end
@@ -93,6 +98,7 @@ class PrototypedObject
       method = parent.get_method name
       break if method
     end
+
     method
   end
 
@@ -112,8 +118,18 @@ class PrototypedObject
   end
 
   def call_next
+    method_name = executing_method_stack.last
     method = get_prototype_method(method_name)
+
+    if(!method)
+      raise NoMethodError, "No se encontro el metodo ´#{name}´"
+    end
+
     self.instance_exec &method
+  end
+
+  def executing_method_stack
+    @executing_method_stack ||= Array.new
   end
 
 end
