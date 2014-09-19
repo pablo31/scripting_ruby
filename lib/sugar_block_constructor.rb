@@ -15,4 +15,9 @@ class SugarBlockConstructor < BlockConstructor
     self
   end
 
+  def with_properties(list)
+    nuevo_constructor = ListConstructor.new(self.prototype, list)
+    nuevo_constructor
+  end
+
 end
