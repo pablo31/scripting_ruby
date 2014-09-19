@@ -122,6 +122,11 @@ class PrototypedObject
 
   def call_next
     method_name = executing_method_stack.last
+
+    if(!method_name)
+      raise StandardError, 'No se puede ejecutar call_next fuera de un metodo de instancia'
+    end
+
     method = get_prototype_method(method_name)
 
     if(!method)

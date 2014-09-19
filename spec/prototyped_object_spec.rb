@@ -313,6 +313,9 @@ describe PrototypedObject do
       object.set(:metodo, proc { call_next })
       expect{object.metodo}.to raise_error NoMethodError
     end
+    it 'arroja error si se llama al call_next desde afuera' do
+      expect{object.call_next}.to raise_error StandardError
+    end
   end
 
 end
