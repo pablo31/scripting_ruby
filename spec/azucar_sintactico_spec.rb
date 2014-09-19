@@ -45,4 +45,18 @@ describe 'Azucar Sintactico' do
     expect(otro_guerrero.atacar_a(guerrero_proto)).to eq(80)
   end
 
+  it 'Parte 3' do
+
+    guerrero = PrototypedObject.new
+    guerrero_constructor = PrototypedConstructor.new(guerrero) do |una_energia, un_potencial_ofensivo,
+        un_potencial_defensivo|
+      self.energia = una_energia
+      self.potencial_ofensivo = un_potencial_ofensivo
+      self.potencial_defensivo = un_potencial_defensivo
+    end
+
+    un_guerrero = guerrero_constructor.new(100, 30, 10)
+    expect(un_guerrero.energia).to eq(100)
+  end
+
 end

@@ -44,6 +44,7 @@ class BaseConstructor
     nuevos_atributos = prototipo_descartable.instance_variables
     nuevos_atributos.delete(:@methods)
     nuevos_atributos.delete(:@prototypes_list)
+    nuevos_atributos.delete(:@executing_method_stack)
 
     #creo el nuevo bloque del constructor extendido
     new_block = proc do |new_obj, *args|
