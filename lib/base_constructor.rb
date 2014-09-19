@@ -41,12 +41,13 @@ class BaseConstructor
     #guardo los nuevos atributos en un objeto cualquiera
     prototipo_descartable = PrototypedObject.new
     block.call(prototipo_descartable)
-    atributos = prototipo_descartable.instance_variables
-
+    nuevos_atributos = prototipo_descartable.instance_variables
+    nuevos_atributos.delete(:@methods)
+    nuevos_atributos.delete(:@prototypes_list)
 
     #creo el nuevo bloque del constructor extendido
     new_block = proc do |new_obj, *args|
-      array_asoc = atributos.zip(args)
+      array_asoc = nuevos_atributos.zip(args)
       array_asoc.each do |element|
         attribute = element[0]
         value = element[1]
