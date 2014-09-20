@@ -5,6 +5,7 @@ require_relative 'option_constructor'
 require_relative 'copy_constructor'
 require_relative 'sugar_block_constructor'
 require_relative 'list_constructor'
+require_relative 'extended_constructor'
 
 class PrototypedConstructor
 
