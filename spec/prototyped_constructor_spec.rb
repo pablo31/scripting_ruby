@@ -70,7 +70,7 @@ describe 'Constructores' do
 
 
 
-    #Ahora va con la segunda variante de constructores
+    # #Ahora va con la segunda variante de constructores
     guerrero_option_constructor = PrototypedConstructor.new(guerrero)
     un_guerrero = guerrero_option_constructor.new(
         {energia: 100, potencial_ofensivo: 30, potencial_defensivo: 10}

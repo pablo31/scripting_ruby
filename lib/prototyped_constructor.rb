@@ -10,16 +10,13 @@ require_relative 'extended_constructor'
 class PrototypedConstructor
 
   def self.new(proto_obj, proc=nil, &block)
-      if proc.is_a?(Proc)
-        BlockConstructor.new(proto_obj, proc)
-      else if block_given?
-             SugarBlockConstructor.new(proto_obj, block)
-           else
-             OptionConstructor.new(proto_obj)
-           end
-      end
-
-
+    if proc.is_a?(Proc)
+      BlockConstructor.new(proto_obj, proc)
+    elsif block_given?
+      SugarBlockConstructor.new(proto_obj, block)
+    else
+      OptionConstructor.new(proto_obj)
+    end
   end
 
   def self.copy(obj)
