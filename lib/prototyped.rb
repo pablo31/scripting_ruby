@@ -122,16 +122,10 @@ module Prototyped
 
   def call_next
     method_name = executing_method_stack.last
-
-    if(!method_name)
-      raise StandardError, 'No se puede ejecutar call_next fuera de un metodo de instancia'
-    end
+    raise(StandardError, 'No se puede ejecutar call_next fuera de un metodo de instancia') unless method_name
 
     method = get_prototype_method(method_name)
-
-    if(!method)
-      raise NoMethodError, "No se encontro el metodo ´#{method_name}´"
-    end
+    raise(NoMethodError, "No se encontro el metodo ´#{method_name}´") unless method
 
     self.instance_exec &method
   end
