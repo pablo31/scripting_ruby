@@ -12,7 +12,7 @@ class BlockConstructor < BaseConstructor
   end
 
   def arguments_needed
-    (self.initialization_block.parameters.length) -1
+    (self.initialization_block.arity) -1
   end
 
 end

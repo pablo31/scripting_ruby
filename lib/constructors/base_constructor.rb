@@ -1,7 +1,6 @@
 class BaseConstructor
 
-  attr_accessor :prototype
-  attr_accessor :super_constructor
+  attr_accessor :prototype, :super_constructor
 
   def initialize(prototype)
     self.prototype = prototype
