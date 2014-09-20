@@ -22,7 +22,7 @@ describe PrototypedObject do
       expect(objeto.nombre_metodo).to eq(2)
     end
     it 'arroja excepcion si no se le asigno el metodo' do
-      expect{objeto.nombre_motodo}.to raise_error NoMethodError
+      expect{objeto.nombre_metodo}.to raise_error NoMethodError
     end
   end
 
