@@ -48,7 +48,7 @@ module Prototyped
         result = self.instance_exec(*args, &method)
       else
         name = method_name.to_s
-        super if name[name.length-1] != "=" && !block_given?
+        super if !name.end_with?("=") && !block_given?
         value = args[0] || block
         super unless value
         name = name.gsub('=', '') # Se elimina el caracter '=' del metodo
