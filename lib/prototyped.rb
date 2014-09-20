@@ -14,6 +14,7 @@ module Prototyped
     })
 
     self.set_method("#{name}=".to_sym, proc { |new_value|
+      set_method(name, new_value) if new_value.is_a?(Proc) #Ver parte 6 de azucar_sintactico_spec (porque asi es una cagada)
       self.instance_variable_set("@#{name}", new_value)
     })
   end

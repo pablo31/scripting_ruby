@@ -107,11 +107,11 @@ describe 'Azucar Sintactico' do
     atila = guerrero_constructor.new(100, 50, 30)
     expect(atila.potencial_ofensivo).to eq(50)
     proto_guerrero = guerrero_constructor.prototype
-    proto_guerrero.atacar_a = proc {
+    proto_guerrero.potencial_ofensivo = proc {
       1000
     }
 
-    expect(atila.atacar_a).to eq(1000)
+    expect(atila.potencial_ofensivo).to eq(1000)
 
   end
 
