@@ -8,13 +8,12 @@ class ExtendedConstructor
   end
 
   def new *args
-    obj = decorated.new *args
-    args_count = args.size - decorated.arguments_needed
-    extended_args = args.last(args_count)
+    args_count = decorated.arguments_needed
+    decorated_args = args.first(args_count)
+    extended_args = args.last(args.size - args_count)
+    obj = decorated.new *decorated_args
     block.call(obj, *extended_args)
     obj
   end
 
 end
-
-# (c) 2014
