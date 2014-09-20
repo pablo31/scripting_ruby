@@ -61,30 +61,6 @@ module Prototyped
     result
   end
 
-  # def clone
-  #   created_clone = PrototypedObject.new
-  #   self.instance_variables
-  #   self.instance_variables.each do |ivar_name|
-  #     begin
-  #       value = self.instance_variable_get(ivar_name)
-  #       #if(value)
-  #       #  value = value.clone
-  #       #end
-  #       if(ivar_name != @metamodel)
-  #         created_clone.instance_variable_set(
-  #             ivar_name,
-  #             value)
-  #       end
-  #     rescue => exception
-  #       puts exception.backtrace
-  #       #raise exception # always reraise
-  #     end
-
-  #   end
-  #   created_clone.metamodel = self.metamodel.clone
-  #   created_clone
-  # end
-
   def initialize &block
     super
     self.instance_eval(&block) if block_given?
