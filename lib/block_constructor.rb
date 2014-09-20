@@ -1,7 +1,6 @@
 class BlockConstructor < BaseConstructor
 
   attr_accessor :initialization_block
-  attr_accessor :super_constructor
 
   def initialize(proto_obj, block)
     self.prototype = proto_obj
