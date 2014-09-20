@@ -12,7 +12,11 @@ class ExtendedConstructor
     decorated_args = args.first(args_count)
     extended_args = args.last(args.size - args_count)
     obj = decorated.new *decorated_args
-    block.call(obj, *extended_args)
+    if block.arity == extended_args.size
+      obj.instance_exec(*extended_args, &block)
+    else
+      block.call(obj, *extended_args)
+    end
     obj
   end
 
