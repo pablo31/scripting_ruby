@@ -77,43 +77,41 @@ module Prototyped
 
   def get_next_method(method_caller)
 
-    own_method= prototyped_methods[method_caller.name.to_sym]
-
-    if(own_method == method_caller)
-      own_method = nil
-    end
     method = nil
+    linearized_prototypes = self.get_linearized_prototypes
 
-    prototypes_list.each do |parent|
-      method = parent.prototyped_methods[method_caller.name.to_sym]
+    method_caller_found = false
 
-      # orden 1
-      if(method == method_caller)
-        method = nil
+    linearized_prototypes.each do |prototype|
+      current_method = prototype.prototyped_methods[method_caller.name.to_sym]
+
+      if(current_method == method_caller)
+        method_caller_found = true
+      else
+        if(method_caller_found)
+          method = current_method
+        end
       end
 
-      if(!method)
-        method = parent.get_next_method(method_caller)
-      end
-
-      #orden 2
-      # method = parent.get_next_method(method_caller)
-      #
-      # if(method == method_caller)
-      #   method = nil
-      # end
-      #
-      # if(!method)
-      #   method = parent.prototyped_methods[method_caller.name.to_sym]
-      # end
-
-      break if method and method != method_caller
+      break if method
     end
-
 
     method
   end
 
+
+  def get_linearized_prototypes
+
+    linearized_prototypes = []
+    linearized_prototypes << self
+
+    prototypes_list.each do |prototype|
+      prototype_linearized_prototypes = prototype.get_linearized_prototypes
+
+      linearized_prototypes.concat(prototype_linearized_prototypes)
+    end
+    linearized_prototypes
+  end
 
   def set_prototypes(proto_array)
     prototypes_list.clear

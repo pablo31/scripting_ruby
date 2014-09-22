@@ -418,13 +418,13 @@ describe PrototypedObject do
       parent.set_prototype(grandparent)
       parent.set(:metodo, proc { 'parent and ' + call_next })
 
-      grandparent2.set(:metodo, proc { 'grandparent2' + call_next }) #A)
+      grandparent2.set(:metodo, proc { 'grandparent2 and ' + call_next }) #A)
       parent2.set_prototype(grandparent2)
       parent2.set(:metodo, proc { 'parent2 and ' + call_next })
 
       object.set_prototypes([parent, parent2]) #el lookup empieza por parent2, y pero no corta en grandparent2 como dice A) -tiene un call_next-
       object.set(:metodo, proc {'child and ' + call_next})
-      expect(object.metodo).to eq('child and parent2 and grandparent2')
+      expect(object.metodo).to eq('child and parent2 and grandparent2 and parent and grandparent')
     end
   end
 
