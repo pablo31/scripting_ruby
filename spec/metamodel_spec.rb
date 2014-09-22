@@ -23,7 +23,7 @@ describe 'Metamodel' do
 
     #revisamos que el metodo haya sido agregado y sea el unico
     expect(object.prototyped_methods.length).to eq(1)
-    expect(object.get_method('a_method')).to eq(block)
+    expect(object.get_method('a_method').block).to eq(block)
   end
 
   it 'PrototypedObject permite agregar multiples metodos y recuperarlos' do
@@ -41,8 +41,8 @@ describe 'Metamodel' do
 
     #revisamos que los metodos hayan sido agregados y sean unicos
     expect(object.prototyped_methods.length).to eq(2)
-    expect(object.get_method('a_method')).to eq(a_block)
-    expect(object.get_method('another_method')).to eq(another_block)
+    expect(object.get_method('a_method').block).to eq(a_block)
+    expect(object.get_method('another_method').block).to eq(another_block)
   end
 
   it 'PrototypedObject permite agregar un parent_metamodel con metodos y recuperarlos a traves del hijo' do
@@ -59,7 +59,7 @@ describe 'Metamodel' do
     expect(son.prototyped_methods.length).to eq(0)
 
     #verificamos que el metamodel hijo hereda los metodos del padre
-    expect(son.get_method('a_method')).to eq(block)
+    expect(son.get_method('a_method').block).to eq(block)
   end
 
 

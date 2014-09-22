@@ -289,6 +289,9 @@ describe PrototypedObject do
   end
 
   context 'call_next' do
+    let :grandparent do
+      PrototypedObject.new
+    end
     let :parent do
       PrototypedObject.new
     end
@@ -316,6 +319,114 @@ describe PrototypedObject do
     it 'arroja error si se llama al call_next desde afuera' do
       expect{object.call_next}.to raise_error StandardError
     end
+
+
+    it 'dos llamadas a call next consecutivas deben ser posibles, objeto con muchos prototipos' do
+      grandparent.name = 'grandparent'
+      parent.name = 'parent'
+      object.name = 'child'
+
+
+      grandparent.set(:metodo, proc { 'grandparent' })
+      parent.set(:metodo, proc { 'parent and ' + call_next })
+
+      object.set_prototypes([grandparent, parent])
+      object.set(:metodo, proc { 'child and ' + call_next })
+      expect(object.metodo).to eq('child and parent and grandparent')
+    end
+
+    it 'dos llamadas a call next consecutivas deben ser posibles, objeto con prototipo que tiene otro prototipo' do
+      grandparent.name = 'grandparent'
+      parent.name = 'parent'
+      object.name = 'child'
+
+
+      grandparent.set(:metodo, proc { 'grandparent' })
+
+      parent.set_prototype(grandparent)
+      parent.set(:metodo, proc { 'parent and ' + call_next })
+
+      object.set_prototype(parent)
+      object.set(:metodo, proc { 'child and ' + call_next })
+      expect(object.metodo).to eq('child and parent and grandparent')
+    end
+
+    it 'una llamada a call next, el metodo no esta en la instancia sino en multiples prototipos' do
+      grandparent.name = 'grandparent'
+      parent.name = 'parent'
+      object.name = 'child'
+
+
+      grandparent.set(:metodo, proc { 'grandparent' })
+
+      parent.set(:metodo, proc { 'parent and ' + call_next })
+
+      object.set_prototypes([grandparent, parent])
+      expect(object.metodo).to eq('parent and grandparent')
+    end
+
+    it 'una llamada a call next, el metodo no esta en la instancia sino en prototipo que tiene otro prototipo' do
+      grandparent.name = 'grandparent'
+      parent.name = 'parent'
+      object.name = 'child'
+
+
+      grandparent.set(:metodo, proc { 'grandparent' })
+
+      parent.set_prototype(grandparent)
+      parent.set(:metodo, proc { 'parent and ' + call_next })
+
+      object.set_prototype(parent)
+      expect(object.metodo).to eq('parent and grandparent')
+    end
+
+    it 'objeto con dos prototipos, cada prototipo con un prototipo, resuelve priorizand el ultimo de los prototypes de object' do
+      parent2 = PrototypedObject.new
+      grandparent2 = PrototypedObject.new
+
+      grandparent.name = 'grandparent'
+      parent.name = 'parent'
+      object.name = 'child'
+      grandparent2.name = 'grandparent2'
+      parent2.name = 'parent2'
+
+      grandparent.set(:metodo, proc { 'grandparent' })
+      parent.set_prototype(grandparent)
+      parent.set(:metodo, proc { 'parent and ' + call_next })
+
+      grandparent2.set(:metodo, proc { 'grandparent2' }) #A)
+      parent2.set_prototype(grandparent2)
+      parent2.set(:metodo, proc { 'parent2 and ' + call_next })
+
+      object.set_prototypes([parent, parent2]) #el lookup empieza por parent2, y va a cortar en grandparent2 como dice A) -no tiene un call_next-
+      object.set(:metodo, proc {'child and ' + call_next})
+      expect(object.metodo).to eq('child and parent2 and grandparent2')
+    end
+
+
+    it 'objeto con dos prototipos, cada prototipo con un prototipo, resuelve primero la rama de parent2 luego la de parent' do
+      parent2 = PrototypedObject.new
+      grandparent2 = PrototypedObject.new
+
+      grandparent.name = 'grandparent'
+      parent.name = 'parent'
+      object.name = 'child'
+      grandparent2.name = 'grandparent2'
+      parent2.name = 'parent2'
+
+      grandparent.set(:metodo, proc { 'grandparent' })
+      parent.set_prototype(grandparent)
+      parent.set(:metodo, proc { 'parent and ' + call_next })
+
+      grandparent2.set(:metodo, proc { 'grandparent2' + call_next }) #A)
+      parent2.set_prototype(grandparent2)
+      parent2.set(:metodo, proc { 'parent2 and ' + call_next })
+
+      object.set_prototypes([parent, parent2]) #el lookup empieza por parent2, y pero no corta en grandparent2 como dice A) -tiene un call_next-
+      object.set(:metodo, proc {'child and ' + call_next})
+      expect(object.metodo).to eq('child and parent2 and grandparent2')
+    end
   end
+
 
 end
