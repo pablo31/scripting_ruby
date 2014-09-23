@@ -426,6 +426,24 @@ describe PrototypedObject do
       object.set(:metodo, proc {'child and ' + call_next})
       expect(object.metodo).to eq('child and parent2 and grandparent2 and parent and grandparent')
     end
+
+    it 'objeto con prototipo, el metodo llama al call_next 2 veces y a otro metodo que llama a su propio call_next en el medio' do
+
+      grandparent.name = 'grandparent'
+      parent.name = 'parent'
+      object.name = 'child'
+
+      grandparent.set(:metodo, proc { 'grandparent.metodo' })
+
+      parent.set_prototype(grandparent)
+      parent.set(:metodo, proc {'parent.metodo ' + otro_metodo + call_next})
+      parent.set(:otro_metodo, proc {'parent.otro_metodo '})
+
+      object.set(:metodo, proc {'object.metodo ' + call_next })
+      object.set(:otro_metodo, proc {'object.otro_metodo ' + call_next})
+
+      expect(object.metodo).to eq('object.metodo parent.metodo object.otro_metodo parent.otro_metodo grandparent.metodo')
+    end
   end
 
 
